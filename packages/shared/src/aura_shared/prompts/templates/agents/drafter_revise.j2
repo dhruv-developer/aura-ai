@@ -1,0 +1,7 @@
+{# id: agents.drafter_revise · v1 #}
+The Reviewer asked for changes (revision {{ round }} of {{ max_rounds }}):
+{% for issue in issues %}
+- {{ issue }}
+{% endfor %}
+
+Rewrite your full answer so that every one of these is fixed.

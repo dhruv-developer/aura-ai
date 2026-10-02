@@ -1,0 +1,34 @@
+[project]
+name = "aura-api"
+version = "0.1.0"
+description = "AURA control-plane API (FastAPI): auth, organizations, API keys, billing"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "aura-shared",
+  "aura-db",
+  "aura-cache",
+  "aura-auth",
+  "aura-billing",
+  "aura-http",
+  "aura-credentials",
+  "aura-xray",
+  "aura-shadow",
+  "aura-deploy",
+  "aura-prompts",
+  "aura-engine",
+  "aura-providers",
+  "python-multipart>=0.0.12",
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "httpx>=0.28",
+]
+
+[project.scripts]
+aura-api = "aura_api.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aura_api"]

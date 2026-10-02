@@ -1,0 +1,134 @@
+# AURA model catalog. Prices are USD per 1M tokens.
+#
+# Anthropic prices and IDs come from Anthropic's published model table (as of prices_as_of).
+# The Haiku 4.5 cached-input price uses the standard 0.1x cache-read rate. Cache writes are
+# priced at the 5-minute rate (1.25x input).
+# VERIFY every price against the provider's pricing page before relying on reported
+# costs. The catalog version hash is recorded on every execution, so historical costs
+# stay reproducible after edits.
+#
+# Capabilities:
+#   sampling          accepts temperature (Opus 5.5 / Sonnet 5.5 reject non-default values)
+#   effort            accepts output_config.effort
+#   refusal_fallback  opt into Anthropic's server-side fallbacks: "default" on refusal
+prices_as_of: "2026-09-25"
+
+providers:
+  anthropic:
+    models:
+      claude-haiku-4-5:
+        display_name: Claude Haiku 4.5
+        tier: small
+        context_window: 200000
+        max_output: 64000
+        prices: {input: 1.00, output: 5.00, cached_input: 0.10, cache_write: 1.25}
+        capabilities: [sampling, stop_sequences, vision]
+        regions: [global]
+      claude-sonnet-5-5:
+        display_name: Claude Sonnet 5.5
+        tier: medium
+        context_window: 1000000
+        max_output: 128000
+        prices: {input: 2.00, output: 10.00, cached_input: 0.20, cache_write: 2.50}
+        capabilities: [effort, refusal_fallback, stop_sequences, vision]
+        regions: [global]
+      claude-opus-5-5:
+        display_name: Claude Opus 5.5
+        tier: frontier
+        context_window: 1000000
+        max_output: 128000
+        prices: {input: 4.00, output: 20.00, cached_input: 0.20, cache_write: 5.00}
+        capabilities: [effort, refusal_fallback, stop_sequences, vision]
+        regions: [global]
+
+  # OpenAI-compatible providers (OpenAI, OpenRouter, Google's OpenAI-compatible endpoint,
+  # vLLM/Ollama, Indian hosts). Add models here with prices verified by the operator,
+  # for example:
+  #
+  # openrouter:
+  #   models:
+  #     <vendor>/<model>:
+  #       tier: small
+  #       context_window: 128000
+  #       max_output: 16000
+  #       prices: {input: <verify>, output: <verify>}
+  #       capabilities: [sampling, stop_sequences]
+
+  # Groq (OpenAI-compatible). Models and prices from console.groq.com/docs/models and the
+  # live /v1/models list for our key, checked 2026-10-01. Llama 3.1 8B / 3.3 70B are now
+  # enterprise-only, so they are not listed. Not chat models, so excluded: whisper (speech
+  # to text), orpheus (text to speech), prompt-guard / gpt-oss-safeguard (classifiers).
+  # allam-2-7b is available but Arabic-focused with a 4k context and no published price.
+  groq:
+    models:
+      openai/gpt-oss-20b:
+        display_name: GPT-OSS 20B (Groq)
+        tier: small
+        context_window: 131072
+        max_output: 65536
+        prices: {input: 0.075, output: 0.30}
+        capabilities: [sampling, stop_sequences]
+        regions: [global]
+      openai/gpt-oss-120b:
+        display_name: GPT-OSS 120B (Groq)
+        tier: frontier
+        context_window: 131072
+        max_output: 65536
+        prices: {input: 0.15, output: 0.60}
+        capabilities: [sampling, stop_sequences]
+        regions: [global]
+      # Preview model, and 5x the price of GPT-OSS 120B: a strong alternative (and
+      # fallback), never a "medium" step up. Balanced therefore uses GPT-OSS 120B.
+      qwen/qwen3.8-27b:
+        display_name: Qwen 3.8 27B (Groq, preview)
+        tier: frontier
+        context_window: 131072
+        max_output: 16384
+        prices: {input: 0.80, output: 4.00}
+        capabilities: [sampling, stop_sequences]
+        regions: [global]
+
+  # Self-hosted models via Ollama (free; enabled by AURA_OLLAMA_BASE_URL). The ids must
+  # match models pulled with `ollama pull <name>`. There is no frontier-tier local model,
+  # so "Best" uses the strongest available one and the routing reason says so.
+  ollama:
+    models:
+      gemma:2b:
+        display_name: Gemma 2B (local)
+        tier: small
+        context_window: 8192
+        max_output: 2048
+        prices: {input: 0.0, output: 0.0}
+        capabilities: [sampling, stop_sequences]
+        regions: [global]
+      llama3.1:
+        display_name: Llama 3.1 8B (local)
+        tier: medium
+        context_window: 131072
+        max_output: 4096
+        prices: {input: 0.0, output: 0.0}
+        capabilities: [sampling, stop_sequences]
+        regions: [global]
+
+  # Deterministic local provider for tests and key-less development. It is disabled
+  # outside dev/test environments by the runtime.
+  stub:
+    models:
+      small:
+        tier: small
+        context_window: 32000
+        max_output: 4000
+        prices: {input: 0.10, output: 0.40}
+        capabilities: [sampling, stop_sequences]
+      medium:
+        tier: medium
+        context_window: 128000
+        max_output: 8000
+        prices: {input: 1.00, output: 4.00}
+        capabilities: [sampling, stop_sequences]
+      frontier:
+        tier: frontier
+        context_window: 200000
+        max_output: 16000
+        prices: {input: 5.00, output: 20.00}
+        capabilities: [sampling, stop_sequences]

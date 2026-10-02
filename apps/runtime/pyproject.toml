@@ -1,0 +1,37 @@
+[project]
+name = "aura-runtime"
+version = "0.1.0"
+description = "AURA data plane: OpenAI-compatible /v1/chat/completions and native /v1/execute"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "aura-shared",
+  "aura-db",
+  "aura-cache",
+  "aura-auth",
+  "aura-billing",
+  "aura-providers",
+  "aura-policy",
+  "aura-routing",
+  "aura-engine",
+  "aura-http",
+  "aura-credentials",
+  "aura-memory",
+  "aura-deploy",
+  "aura-context",
+  "aura-prompts",
+  "aura-graph",
+  "aura-learning",
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.32",
+  "httpx>=0.28",
+]
+
+[project.scripts]
+aura-runtime = "aura_runtime.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aura_runtime"]

@@ -1,0 +1,28 @@
+[project]
+name = "aura-workers"
+version = "0.1.0"
+description = "AURA background workers: telemetry → ClickHouse, usage reconciliation"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "aura-shared",
+  "aura-db",
+  "aura-cache",
+  "aura-billing",
+  "aura-engine",
+  "aura-shadow",
+  "aura-deploy",
+  "aura-prompts",
+  "aura-graph",
+  "httpx>=0.28",
+  "nats-py>=2.9",
+]
+
+[project.scripts]
+aura-workers = "aura_workers.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aura_workers"]

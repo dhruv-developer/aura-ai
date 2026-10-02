@@ -1,0 +1,213 @@
+# Plans, features and entitlements (spec §7–21, §37, §93).
+# PRICES ARE HYPOTHESES to be validated with conversion and retention data (spec §8–9, §19–20).
+# Prices are in minor units (paise). price_minor: null means a custom contract.
+# Editing a plan's price or entitlements creates a new plan version on the next sync, and
+# existing subscribers keep their version.
+
+features:
+  # --- boolean capabilities ---
+  basic_routing:              {kind: boolean, description: Cheap vs strong model routing}
+  advanced_routing:           {kind: boolean, description: Learned / reasoning-aware routing}
+  prompt_optimization:        {kind: boolean, description: Prompt optimizer}
+  advanced_context_optimizer: {kind: boolean, description: Context compiler with compression and budgets}
+  semantic_reuse:             {kind: boolean, description: Semantic response cache}
+  personal_memory:            {kind: boolean, description: Long-term personal memory}
+  knowledge_retrieval:        {kind: boolean, description: Long-term memory and knowledge-base retrieval (RAG)}
+  saved_workflows:            {kind: boolean, description: Saved workflows / execution recipes}
+  research_mode:              {kind: boolean, description: Multi-step research graphs}
+  long_running_workflows:     {kind: boolean, description: Async long-running executions}
+  byok:                       {kind: boolean, description: Bring your own provider keys}
+  api_access:                 {kind: boolean, description: Public API access}
+  priority_execution:         {kind: boolean, description: Priority queue}
+  workload_analytics:         {kind: boolean, description: Workload analytics and X-Ray}
+  policies:                   {kind: boolean, description: Author and activate execution policies}
+  shadow_optimization:        {kind: boolean, description: Shadow replay and comparison}
+  policy_deployment:          {kind: boolean, description: Deploy optimized policies}
+  canary_rollout:             {kind: boolean, description: Canary deployments with rollback}
+  business_outcomes:          {kind: boolean, description: Outcome tracking and cost per outcome}
+  advanced_rbac:              {kind: boolean, description: Custom roles}
+  sso:                        {kind: boolean, description: SAML/OIDC single sign-on}
+  scim:                       {kind: boolean, description: SCIM provisioning}
+  advanced_audit:             {kind: boolean, description: Audit export and SIEM streaming}
+  vpc_deployment:             {kind: boolean, description: VPC / dedicated runtime}
+  customer_managed_keys:      {kind: boolean, description: Customer-managed encryption keys}
+  # --- metered, reset every period ---
+  executions:          {kind: metered, unit: execution, description: Execution runs}
+  premium_model_calls: {kind: metered, unit: call, description: Frontier-model calls}
+  research_jobs:       {kind: metered, unit: job, description: Research-mode jobs}
+  api_requests:        {kind: metered, unit: request, description: API requests}
+  shadow_runs:         {kind: metered, unit: run, description: Shadow replays}
+  evaluation_runs:     {kind: metered, unit: run, description: Evaluation runs}
+  monthly_credits:     {kind: metered, unit: credit, description: Credits granted each period}
+  # --- gauges (a standing count, not reset) ---
+  seats:     {kind: gauge, unit: seat, description: Team members}
+  workloads: {kind: gauge, unit: workload, description: Tracked workloads}
+  projects:  {kind: gauge, unit: project, description: Projects}
+
+plans:
+  free:
+    name: Free
+    audience: b2c
+    priority_class: free
+    price_minor: 0
+    sort_order: 10
+    entitlements:
+      basic_routing: true
+      prompt_optimization: true
+      executions: {limit: 300, period: month}
+      premium_model_calls: {limit: 20, period: month}
+      monthly_credits: {limit: 1000, period: month}
+
+  plus:
+    name: Plus
+    audience: b2c
+    priority_class: paid
+    price_minor: 49900
+    sort_order: 20
+    entitlements:
+      knowledge_retrieval: true
+      basic_routing: true
+      advanced_routing: true
+      prompt_optimization: true
+      advanced_context_optimizer: true
+      semantic_reuse: true
+      personal_memory: true
+      saved_workflows: true
+      priority_execution: true
+      byok: true
+      executions: {limit: 5000, period: month}
+      premium_model_calls: {limit: 500, period: month}
+      research_jobs: {limit: 50, period: month}
+      monthly_credits: {limit: 20000, period: month}
+
+  pro:
+    name: Pro
+    audience: b2c
+    priority_class: paid
+    price_minor: 149900
+    sort_order: 30
+    entitlements:
+      knowledge_retrieval: true
+      basic_routing: true
+      advanced_routing: true
+      prompt_optimization: true
+      advanced_context_optimizer: true
+      semantic_reuse: true
+      personal_memory: true
+      saved_workflows: true
+      research_mode: true
+      long_running_workflows: true
+      priority_execution: true
+      byok: true
+      api_access: true
+      executions: {limit: 30000, period: month}
+      premium_model_calls: {limit: 3000, period: month}
+      research_jobs: {limit: 500, period: month}
+      api_requests: {limit: 50000, period: month}
+      monthly_credits: {limit: 100000, period: month}
+
+  startup:
+    name: Startup
+    audience: b2b
+    priority_class: b2b
+    price_minor: 5000000
+    trial_days: 14
+    sort_order: 40
+    entitlements:
+      knowledge_retrieval: true
+      basic_routing: true
+      prompt_optimization: true
+      advanced_context_optimizer: true
+      semantic_reuse: true
+      byok: true
+      api_access: true
+      policies: true
+      workload_analytics: true
+      shadow_optimization: true
+      executions: {limit: 2000000, period: month}
+      api_requests: {limit: 2000000, period: month}
+      shadow_runs: {limit: 20000, period: month}
+      evaluation_runs: {limit: 20000, period: month}
+      seats: {limit: null}
+      workloads: {limit: 10}
+      projects: {limit: 5}
+
+  growth:
+    name: Growth
+    audience: b2b
+    priority_class: b2b
+    price_minor: 20000000
+    sort_order: 50
+    entitlements:
+      knowledge_retrieval: true
+      basic_routing: true
+      advanced_routing: true
+      prompt_optimization: true
+      advanced_context_optimizer: true
+      semantic_reuse: true
+      byok: true
+      api_access: true
+      long_running_workflows: true
+      policies: true
+      workload_analytics: true
+      shadow_optimization: true
+      policy_deployment: true
+      canary_rollout: true
+      business_outcomes: true
+      advanced_rbac: true
+      sso: true
+      advanced_audit: true
+      executions: {limit: 20000000, period: month}
+      api_requests: {limit: 20000000, period: month}
+      shadow_runs: {limit: 200000, period: month}
+      evaluation_runs: {limit: 200000, period: month}
+      seats: {limit: null}
+      workloads: {limit: 50}
+      projects: {limit: 25}
+
+  enterprise:
+    name: Enterprise
+    audience: b2b
+    priority_class: enterprise
+    price_minor: null
+    is_public: false
+    sort_order: 60
+    entitlements:
+      knowledge_retrieval: true
+      basic_routing: true
+      advanced_routing: true
+      prompt_optimization: true
+      advanced_context_optimizer: true
+      semantic_reuse: true
+      byok: true
+      api_access: true
+      long_running_workflows: true
+      policies: true
+      workload_analytics: true
+      shadow_optimization: true
+      policy_deployment: true
+      canary_rollout: true
+      business_outcomes: true
+      advanced_rbac: true
+      sso: true
+      scim: true
+      advanced_audit: true
+      vpc_deployment: true
+      customer_managed_keys: true
+      executions: {limit: null, period: month}
+      api_requests: {limit: null, period: month}
+      shadow_runs: {limit: null, period: month}
+      evaluation_runs: {limit: null, period: month}
+      seats: {limit: null}
+      workloads: {limit: null}
+      projects: {limit: null}
+
+# One-off top-ups for consumer accounts (1 credit = $0.0001 of platform inference).
+credit_packs:
+  small:  {name: "10k credits", credits: 10000, price_minor: 19900}
+  medium: {name: "50k credits", credits: 50000, price_minor: 79900}
+  large:  {name: "150k credits", credits: 150000, price_minor: 199900}
+
+defaults:
+  individual: free
+  organization: startup

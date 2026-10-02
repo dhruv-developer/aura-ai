@@ -1,0 +1,49 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "aura-api",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": [
+        "run",
+        "aura-api"
+      ],
+      "port": 8000
+    },
+    {
+      "name": "aura-runtime",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": [
+        "run",
+        "aura-runtime"
+      ],
+      "port": 8100
+    },
+    {
+      "name": "ollama",
+      "runtimeExecutable": "ollama",
+      "runtimeArgs": [
+        "serve"
+      ],
+      "port": 11434
+    },
+    {
+      "name": "aura-web",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "export PATH=\"$HOME/.nvm/versions/node/v22.7.0/bin:$PATH\" NEXT_PUBLIC_B2C_APP=true && exec pnpm --filter @aura/web dev"
+      ],
+      "port": 3000
+    },
+    {
+      "name": "aura-admin",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-c",
+        "export PATH=\"$HOME/.nvm/versions/node/v22.7.0/bin:$PATH\" && exec pnpm --filter @aura/admin dev"
+      ],
+      "port": 3001
+    }
+  ]
+}

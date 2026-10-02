@@ -1,0 +1,23 @@
+{# id: agents.reviewer_user · v1 #}
+The user's overall request: {{ root_question }}
+{% if parent_question %}
+This sub-question came up while answering: {{ parent_question }}
+{% endif %}
+{% if history %}
+
+Earlier in this conversation (most recent last):
+<history>
+{{ history }}
+</history>
+{% endif %}
+
+Sub-question: {{ question }}
+
+Draft (attempt {{ attempt }} of {{ max_attempts }}):
+<draft>
+{{ draft }}
+</draft>
+{% if not allow_follow_ups %}
+
+Do not propose follow-ups: return "follow_ups": [].
+{% endif %}

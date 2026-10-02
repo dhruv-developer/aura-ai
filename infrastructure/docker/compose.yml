@@ -1,0 +1,51 @@
+# Local development stack. In prod the three Redis roles are separate clusters (ADR-0002);
+# here redis-state and redis-cache share one server on different DBs, and redis-vector
+# runs Redis Stack for vector search.
+name: aura
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment: { POSTGRES_USER: aura, POSTGRES_PASSWORD: aura, POSTGRES_DB: aura }
+    ports: ["5432:5432"]
+    volumes: [pg-data:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U aura"], interval: 5s, retries: 10 }
+
+  redis:
+    image: redis:7.4-alpine
+    # state semantics locally: noeviction + AOF so quota counters survive restarts.
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory-policy", "noeviction"]
+    ports: ["6379:6379"]
+    volumes: [redis-data:/data]
+    healthcheck: { test: ["CMD", "redis-cli", "ping"], interval: 5s, retries: 10 }
+
+  redis-vector:
+    image: redis/redis-stack-server:7.4.0-v1
+    environment: { REDIS_ARGS: "--maxmemory-policy volatile-lfu" }
+    ports: ["6380:6379"]
+
+  nats:
+    image: nats:2.10-alpine
+    command: ["-js", "-sd", "/data", "-m", "8222"]
+    ports: ["4222:4222", "8222:8222"]
+    volumes: [nats-data:/data]
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    environment: { CLICKHOUSE_DB: aura, CLICKHOUSE_USER: aura, CLICKHOUSE_PASSWORD: aura }
+    ports: ["8123:8123", "9009:9000"]
+    volumes: [ch-data:/var/lib/clickhouse]
+    ulimits: { nofile: { soft: 262144, hard: 262144 } }
+
+  minio:
+    image: minio/minio:latest
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment: { MINIO_ROOT_USER: aura, MINIO_ROOT_PASSWORD: aura-dev-secret }
+    ports: ["9000:9000", "9001:9001"]
+    volumes: [minio-data:/data]
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports: ["1025:1025", "8025:8025"]
+
+volumes: { pg-data: {}, redis-data: {}, nats-data: {}, ch-data: {}, minio-data: {} }

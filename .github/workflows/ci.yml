@@ -1,0 +1,56 @@
+name: ci
+on:
+  push: { branches: [main] }
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: aura, POSTGRES_PASSWORD: aura, POSTGRES_DB: aura }
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U aura" --health-interval 5s --health-retries 10
+      redis:
+        image: redis:7.4-alpine
+        ports: ["6379:6379"]
+        options: --health-cmd "redis-cli ping" --health-interval 5s --health-retries 10
+    env:
+      AURA_TEST_REDIS_URL: redis://localhost:6379/15
+      AURA_TEST_DATABASE_URL: postgresql+asyncpg://aura:aura@localhost:5432/aura
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with: { enable-cache: true }
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy
+      - run: uv run lint-imports
+      - run: uv run pytest -q -W error::DeprecationWarning
+      # Models and migrations must never drift (runs after pytest has migrated the DB).
+      - run: uv run alembic -c packages/db/alembic.ini check
+        env: { AURA_DATABASE_URL: "postgresql+asyncpg://aura:aura@localhost:5432/aura" }
+
+  web:
+    # The frontends cannot be built in the development sandbox (node is blocked there);
+    # CI is where they are type-checked and built.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile=false
+      - run: pnpm -r typecheck
+      - run: pnpm --filter @aura/web build
+      - run: pnpm --filter @aura/admin build
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }

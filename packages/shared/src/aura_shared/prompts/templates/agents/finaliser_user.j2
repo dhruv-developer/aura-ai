@@ -1,0 +1,32 @@
+{# id: agents.finaliser_user · v1 #}
+{% macro outline(node, label) %}
+### {{ label }}. {{ node.question }}{% if node.status == "unresolved" %} [UNRESOLVED: {{ node.issues | join("; ") }}]{% elif node.status == "skipped_cap" %} [NOT ANSWERED: limit reached]{% endif %}
+
+{{ node.answer or "(no answer)" }}
+
+{% for child in node.children %}
+{{ outline(child, label ~ "." ~ loop.index) }}
+{% endfor %}
+{% endmacro %}
+The user's request:
+{{ root_question }}
+{% if history %}
+
+Earlier in this conversation (most recent last):
+<history>
+{{ history }}
+</history>
+{% endif %}
+{% if memory %}
+
+What the user asked AURA to remember about them (follow it when relevant):
+{% for item in memory %}
+- {{ item }}
+{% endfor %}
+{% endif %}
+
+Outline of reviewed answers:
+
+{% for node in nodes %}
+{{ outline(node, loop.index | string) }}
+{% endfor %}

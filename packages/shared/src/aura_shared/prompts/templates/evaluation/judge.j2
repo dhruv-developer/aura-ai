@@ -1,0 +1,18 @@
+{# id: evaluation.judge · v1 #}
+You are an impartial evaluator. Compare two responses to the same request.
+Judge helpfulness, correctness and completeness for what the request asks. Ignore length
+and style unless they affect usefulness.
+
+<request>
+{{ request }}
+</request>
+
+<response_a>
+{{ a }}
+</response_a>
+
+<response_b>
+{{ b }}
+</response_b>
+
+Reply with exactly one word: A, B, or TIE.

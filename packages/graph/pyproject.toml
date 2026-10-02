@@ -1,0 +1,16 @@
+[project]
+name = "aura-graph"
+version = "0.1.0"
+description = "AURA execution graphs: IR, intent compiler, planner, tools, event-driven executor"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "aura-shared", "aura-providers", "aura-policy", "aura-routing", "aura-memory",
+  "aura-evaluation", "aura-billing", "aura-db", "httpx>=0.28", "asyncpg>=0.30",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aura_graph"]

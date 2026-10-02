@@ -1,0 +1,13 @@
+[project]
+name = "aura-memory"
+version = "0.1.0"
+description = "AURA memory: short-term session memory and run-scoped working memory (V1)"
+requires-python = ">=3.12,<3.13"
+dependencies = ["aura-shared", "aura-providers", "aura-db"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aura_memory"]

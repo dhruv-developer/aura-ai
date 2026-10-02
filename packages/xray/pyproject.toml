@@ -1,0 +1,13 @@
+[project]
+name = "aura-xray"
+version = "0.1.0"
+description = "AURA AI Workload X-Ray: traffic ingestion, workload discovery, waste detection, savings report"
+requires-python = ">=3.12,<3.13"
+dependencies = ["aura-shared", "aura-db", "aura-providers", "aura-routing", "httpx>=0.28"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aura_xray"]
